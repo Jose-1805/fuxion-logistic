@@ -1,0 +1,20 @@
+#contenedor-principal .container{
+    max-width: 100% !important;
+    padding: 10px 20px !important;
+}
+
+.btn.btn-radius{
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 20px !important;
+    padding: 8px 25px;
+}
+
+.btn.btn-radius-sm{
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 20px !important;
+    padding: 2px 15px;
+    padding-top: 4px;
+    font-size: 10px !important;
+}

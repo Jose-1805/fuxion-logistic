@@ -1,0 +1,5 @@
+body,html{
+    background-image: url("../imagenes/sistema/bg_1.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover;
+}

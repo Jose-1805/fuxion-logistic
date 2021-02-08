@@ -1,0 +1,103 @@
+html, body {
+    background-color: #fff !important;
+}
+
+.pie-pagina{
+    min-height: 60px;
+    background-color: #fff !important;
+    background-repeat: repeat-y !important;
+}
+
+p,i,span,h1,h2,h3,h4,h5,h6,li,label,input,select{
+    font-family: 'Roboto',sans-serif;
+    font-weight: 100 !important;
+    /*color: #333333 !important;*/
+}
+
+.titulo_principal{
+    background-color: #007acf;
+    color: #ffffff;
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold !important;
+    padding: 10px 10px;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    text-transform: uppercase;
+    margin-bottom: 0px !important;
+}
+
+.titulo_secundario{
+    font-size: large;
+}
+
+textarea{
+    max-width: 100% !important;
+}
+
+.contenedor-opciones-vista{
+    position: absolute;
+    z-index: 10;
+    width: 50px;
+    min-height: 100px;
+    left: 5%;
+}
+
+.contenedor-opciones-vista-fixed{
+    position: fixed;
+    top: 20px;
+}
+
+@media (max-width: 1100px) {
+    .contenedor-opciones-vista{
+        left: 0%;
+    }
+}
+
+.dropdown .no-color-focus:focus{
+    background-color: transparent !important;
+}
+
+#contenedor-menu{
+    position: fixed;
+    height: 100%;
+    background-image: linear-gradient(to right, #0086D6 15%, #1aa5f9, #3baef3);
+    border-color: transparent !important;
+    background-image: url("../imagenes/sistema/bg_menu.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover;
+    z-index: 1000;
+}
+
+#contenedor-menu{
+    overflow-y: auto;
+    padding-bottom: 50px !important;
+}
+
+#contenedor-menu *{
+    color: #FFFFFF;
+}
+
+#contenedor-menu .contenedor-item{
+    z-index:1000;
+    padding: 5px 15px;
+}
+
+#contenedor-menu .contenedor-items div{
+    padding: 2px 15px;
+}
+
+#contenedor-menu .item-selected{
+    background-color: rgba(8, 0, 72, 0.42);
+}
+
+.item-ol{
+    border-radius: 2px;
+    border: 1px solid #e4e4e4;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.item-ol .font-xx-large{
+    font-size: 50px !important;
+}

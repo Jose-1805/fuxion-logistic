@@ -1,0 +1,453 @@
+REGISTRADO POR => Jose Luis
+FECHA => 07-12-2017
+DESCRIPCI�N => Insert de nuevos estado y campos para enviar alertas de correos en pedidos procesados con mas de 24 horas
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+
+INSERT INTO `estados_pedidos` (`id`, `nombre`, `descripcion`, `notificacion_push`, `notificacion_correo`, `correos_destinatarios`, `no_asignacion_corte`, `asignacion_corte`, `pedido_entregado`, `plantilla_correo_id`, `created_at`, `updated_at`) VALUES
+(14, 'Anulado soporte', 'Anulado soporte', 'no', 'no', NULL, 'no', 'no', 'no', NULL, '2017-12-07 19:48:58', '2017-12-07 19:48:58'),
+(15, 'Anulado', 'Anulado', 'no', 'no', NULL, 'no', 'no', 'no', NULL, '2017-12-07 21:01:11', '2017-12-07 21:01:11'),
+(16, 'Entregado en Tienda', 'Entregado en Tienda', 'no', 'no', NULL, 'no', 'no', 'no', NULL, '2017-12-12 13:20:41', '2017-12-12 13:20:41');
+
+ALTER TABLE `cortes` ADD `fecha_procesamiento` TIMESTAMP NULL DEFAULT NULL AFTER `guias_asignadas`;
+ALTER TABLE `cortes` ADD `correo_procesamiento_enviado` ENUM('si','no') NOT NULL DEFAULT 'no' AFTER `fecha_procesamiento`;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 09-12-2017
+DESCRIPCI�N => Tabla para el manejo de historial de empresarios
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+CREATE TABLE IF NOT EXISTS `fuxion_logistic`.`historial_empresarios` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `nombres_anterior` VARCHAR(150) NULL DEFAULT NULL,
+  `nombres_nuevo` VARCHAR(150) NULL DEFAULT NULL,
+  `apellidos_anterior` VARCHAR(150) NULL DEFAULT NULL,
+  `apellidos_nuevo` VARCHAR(150) NULL DEFAULT NULL,
+  `direccion_anterior` VARCHAR(250) NULL DEFAULT NULL,
+  `direccion_nueva` VARCHAR(250) NULL DEFAULT NULL,
+  `historial_empresarioscol` VARCHAR(45) NULL DEFAULT NULL,
+  `telefono_anterior` VARCHAR(15) NULL DEFAULT NULL,
+  `telefono_nuevo` VARCHAR(15) NULL DEFAULT NULL,
+  `empresario_id` INT(10) UNSIGNED NOT NULL,
+  `user_id` INT(10) UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_historial_empresarios_empresarios1_idx` (`empresario_id` ASC),
+  INDEX `fk_historial_empresarios_users1_idx` (`user_id` ASC),
+  CONSTRAINT `fk_historial_empresarios_empresarios1`
+    FOREIGN KEY (`empresario_id`)
+    REFERENCES `fuxion_logistic`.`empresarios` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_historial_empresarios_users1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `fuxion_logistic`.`users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 09-12-2017
+DESCRIPCI�N => Modulos de reportes e historial empresario
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+INSERT INTO `modulos` (`id`, `nombre`, `identificador`, `etiqueta`, `url`, `estado`, `created_at`, `updated_at`) VALUES
+(14, 'Historial empresario', 14, 'Historial empresario', '/historial-empresario', 'Activo', '2017-12-09 14:54:11', '2017-12-09 14:54:11'),
+(15, 'Reportes', 15, 'Reportes', '/reporte', 'Activo', '2017-12-09 16:17:07', '2017-12-09 16:17:07');
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 16-12-2017
+DESCRIPCI�N => Edicion de tabla de historial de cambios de empresario
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`historial_empresarios`
+CHANGE COLUMN `created_at` `created_at` TIMESTAMP NOT NULL ,
+ADD COLUMN `email_anterior` VARCHAR(150) NULL DEFAULT NULL AFTER `apellidos_nuevo`,
+ADD COLUMN `email_nuevo` VARCHAR(150) NULL DEFAULT NULL AFTER `email_anterior`;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 16-12-2017
+DESCRIPCI�N => Tabla para facturas de pedidos
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+CREATE TABLE IF NOT EXISTS `fuxion_logistic`.`facturas_pedidos` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `numero` VARCHAR(150) NOT NULL,
+  `pedido_id` INT(10) UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_facturas_flete_pedidos1_idx` (`pedido_id` ASC),
+  CONSTRAINT `fk_facturas_pedido_pedidos_1`
+    FOREIGN KEY (`pedido_id`)
+    REFERENCES `fuxion_logistic`.`pedidos` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 16-12-2017
+DESCRIPCI�N => Quita la restricciòn de campo ùnico en el email de los usuarios
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`users`
+DROP INDEX `users_email_unique` ;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 16-12-2017
+DESCRIPCI�N => Tablas para relacion de nombres de departamentos y ciudades de los OL
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+CREATE TABLE IF NOT EXISTS `fuxion_logistic`.`operadores_logisticos_departamentos` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(150) NOT NULL,
+  `operador_logistico_id` INT(10) UNSIGNED NOT NULL,
+  `departamento_id` INT(10) UNSIGNED NOT NULL,
+  INDEX `fk_operadores_logisticos_has_departamentos_departamentos1_idx` (`departamento_id` ASC),
+  INDEX `fk_operadores_logisticos_has_departamentos_operadores_logis_idx` (`operador_logistico_id` ASC),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_operadores_logisticos_has_departamentos_operadores_logisti1`
+    FOREIGN KEY (`operador_logistico_id`)
+    REFERENCES `fuxion_logistic`.`operadores_logisticos` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operadores_logisticos_has_departamentos_departamentos1`
+    FOREIGN KEY (`departamento_id`)
+    REFERENCES `fuxion_logistic`.`departamentos` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `fuxion_logistic`.`operadores_logisticos_ciudades` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(150) NOT NULL,
+  `operador_logistico_id` INT(10) UNSIGNED NOT NULL,
+  `ciudad_id` INT(10) UNSIGNED NOT NULL,
+  INDEX `fk_operadores_logisticos_has_ciudades_ciudades1_idx` (`ciudad_id` ASC),
+  INDEX `fk_operadores_logisticos_has_ciudades_operador_logistico_idx` (`operador_logistico_id` ASC),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_operadores_logisticos_has_ciudades_operadores_logisticos1`
+    FOREIGN KEY (`operador_logistico_id`)
+    REFERENCES `fuxion_logistic`.`operadores_logisticos` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_operadores_logisticos_has_ciudades_ciudades1`
+    FOREIGN KEY (`ciudad_id`)
+    REFERENCES `fuxion_logistic`.`ciudades` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 18-12-2017
+DESCRIPCI�N => Cambio para relacion de nombres de departamentos y ciudades de los OL
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`empresarios`
+DROP COLUMN `departamento`,
+DROP COLUMN `ciudad`,
+CHANGE COLUMN `created_at` `created_at` TIMESTAMP NOT NULL ,
+ADD COLUMN `ciudad_id` INT(10) UNSIGNED NOT NULL AFTER `user_id`,
+ADD COLUMN `departamento_id` INT(10) UNSIGNED NOT NULL AFTER `ciudad_id`,
+ADD INDEX `fk_empresarios_ciudades1_idx` (`ciudad_id` ASC),
+ADD INDEX `fk_empresarios_departamentos1_idx` (`departamento_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`empresarios`
+ADD CONSTRAINT `fk_empresarios_ciudades1`
+  FOREIGN KEY (`ciudad_id`)
+  REFERENCES `fuxion_logistic`.`ciudades` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_empresarios_departamentos1`
+  FOREIGN KEY (`departamento_id`)
+  REFERENCES `fuxion_logistic`.`departamentos` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 18-12-2017
+DESCRIPCI�N => Cambios para agregar first_name y last_name de los destinatarios de cada pedido
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`pedidos`
+ADD COLUMN `first_name` VARCHAR(150) NULL DEFAULT NULL AFTER `novedad`,
+ADD COLUMN `last_name` VARCHAR(150) NULL DEFAULT NULL AFTER `first_name`;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 23-12-2017
+DESCRIPCI�N => Insert de módulo para la gestión de regiones
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+INSERT INTO `modulos` (`id`, `nombre`, `identificador`, `etiqueta`, `url`, `estado`, `created_at`, `updated_at`) VALUES (16, 'Regiones', 16, 'Regiones', '/region', 'Activo', '2017-12-21 11:28:48', '2017-12-21 11:28:48');
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 28-12-2017
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`empresarios`
+DROP FOREIGN KEY `fk_empresarios_departamentos1`,
+DROP FOREIGN KEY `fk_empresarios_ciudades1`;
+
+ALTER TABLE `fuxion_logistic`.`empresarios`
+DROP COLUMN `departamento_id`,
+DROP COLUMN `ciudad_id`,
+DROP COLUMN `direccion`,
+DROP INDEX `fk_empresarios_departamentos1_idx` ,
+DROP INDEX `fk_empresarios_ciudades1_idx` ;
+
+ALTER TABLE `fuxion_logistic`.`pedidos`
+ADD COLUMN `direccion` VARCHAR(250) NULL DEFAULT NULL AFTER `last_name`,
+ADD COLUMN `email` VARCHAR(150) NULL DEFAULT NULL AFTER `direccion`,
+ADD COLUMN `ciudad_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `email`,
+ADD COLUMN `departamento_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `ciudad_id`,
+ADD INDEX `fk_pedidos_ciudades1_idx` (`ciudad_id` ASC),
+ADD INDEX `fk_pedidos_departamentos1_idx` (`departamento_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`pedidos`
+ADD CONSTRAINT `fk_pedidos_ciudades1`
+  FOREIGN KEY (`ciudad_id`)
+  REFERENCES `fuxion_logistic`.`ciudades` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_pedidos_departamentos1`
+  FOREIGN KEY (`departamento_id`)
+  REFERENCES `fuxion_logistic`.`departamentos` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 28-12-2017
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`historial_empresarios`
+DROP FOREIGN KEY `fk_historial_empresarios_empresarios1`;
+
+ALTER TABLE `fuxion_logistic`.`historial_empresarios`
+DROP COLUMN `empresario_id`,
+ADD COLUMN `pedido_id` INT(10) UNSIGNED NOT NULL AFTER `user_id`,
+ADD INDEX `fk_historial_empresarios_pedidos1_idx` (`pedido_id` ASC),
+DROP INDEX `fk_historial_empresarios_empresarios1_idx` ;
+
+ALTER TABLE `fuxion_logistic`.`facturas_pedidos`
+CHANGE COLUMN `created_at` `created_at` TIMESTAMP NOT NULL ;
+
+ALTER TABLE `fuxion_logistic`.`historial_empresarios`
+ADD CONSTRAINT `fk_historial_empresarios_pedidos1`
+  FOREIGN KEY (`pedido_id`)
+  REFERENCES `fuxion_logistic`.`pedidos` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 02-01-2018
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+vista v_user_empresario_pedido :
+SELECT
+  `users`.`id` AS 'users_id',
+  `users`.`tipo_identificacion`,
+  `users`.`identificacion`,
+  `users`.`nombres`,
+  `users`.`apellidos`,
+  `users`.`telefono`,
+  `users`.`fecha_nacimiento`,
+  `users`.`email`,
+  `users`.`genero`,
+  `users`.`sesion_web`,
+  `users`.`sesion_fuxion_track`,
+  `users`.`sesion_fuxion_trax`,
+  `users`.`archivo_id`,
+  `users`.`rol_id`,
+  `users`.`bodega_id`,
+  `empresarios`.`id` AS 'empresarios_id',
+  `empresarios`.`tipo`,
+  `empresarios`.`kit`,
+  `pedidos`.`direccion`,
+  `ciudades`.`nombre` AS 'ciudad',
+  `departamentos`.`nombre` AS 'departamento',
+  `empresarios`.`empresario_id` AS 'empresarios_empresario_id',
+  `empresarios`.`enroler_id`,
+  `empresarios`.`user_id` AS 'user_id_empresarios',
+  `pedidos`.`id` AS 'pedido_id',
+  `pedidos`.`fecha_orden`,
+  `pedidos`.`fecha_impresion`,
+  `pedidos`.`serie`,
+  `pedidos`.`correlativo`,
+  `pedidos`.`orden_id`,
+  `pedidos`.`impreso_por`,
+  `pedidos`.`subtotal`,
+  `pedidos`.`total_tax`,
+  `pedidos`.`costo_envio`,
+  `pedidos`.`total`,
+  `pedidos`.`descuento`,
+  `pedidos`.`tipo_pago`,
+  `pedidos`.`volumen_comisionable`,
+  `pedidos`.`empresario_id`,
+  `pedidos`.`corte_id`,
+  `pedidos`.`corte_importacion_id`
+FROM
+  ((((`pedidos`
+    JOIN `empresarios` ON ((`empresarios`.`id` = `pedidos`.`empresario_id`)))
+    JOIN `users` ON ((`users`.`id` = `empresarios`.`user_id`)))
+    JOIN `ciudades` ON ((`ciudades`.`id` = `pedidos`.`ciudad_id`)))
+    JOIN `departamentos` ON ((`departamentos`.`id` = `pedidos`.`departamento_id`)));
+
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 19-01-2018
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `nombres_estados_operadores_logisticos` CHANGE `nombre` `nombre` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => 22-01-2018
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+ALTER TABLE `fuxion_logistic`.`historial_estados_pedidos`
+ADD COLUMN `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `razon_estado`,
+ADD INDEX `fk_historial_estados_pedidos_users1_idx` (`user_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`facturas_kits`
+ADD COLUMN `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `empresario_id`,
+ADD INDEX `fk_facturas_kits_users1_idx` (`user_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`facturas_fletes`
+ADD COLUMN `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `pedido_id`,
+ADD INDEX `fk_facturas_fletes_users1_idx` (`user_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`facturas_pedidos`
+ADD COLUMN `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `pedido_id`,
+ADD INDEX `fk_facturas_pedidos_users1_idx` (`user_id` ASC);
+
+ALTER TABLE `fuxion_logistic`.`historial_estados_pedidos`
+ADD CONSTRAINT `fk_historial_estados_pedidos_users1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `fuxion_logistic`.`users` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+ALTER TABLE `fuxion_logistic`.`facturas_kits`
+ADD CONSTRAINT `fk_facturas_kits_users1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `fuxion_logistic`.`users` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+ALTER TABLE `fuxion_logistic`.`facturas_fletes`
+ADD CONSTRAINT `fk_facturas_fletes_users1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `fuxion_logistic`.`users` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+ALTER TABLE `fuxion_logistic`.`facturas_pedidos`
+ADD CONSTRAINT `fk_facturas_pedidos_users1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `fuxion_logistic`.`users` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => XX-01-2018
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
+
+CREATE TABLE IF NOT EXISTS `fuxion_logistic`.`reporte_soporte_empresario` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `fecha` DATETIME NOT NULL,
+  `orden` VARCHAR(250) NOT NULL,
+  `accion` VARCHAR(250) NOT NULL,
+  `no_factura` VARCHAR(250) NULL DEFAULT NULL,
+  `usuario` VARCHAR(250) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+***********************************************************************************
+***********************************************************************************
+***********************************************************************************
+REGISTRADO POR => Jose Luis
+FECHA => XX-01-2018
+DESCRIPCI�N =>
+EN PREPRODUCCI�N => NO
+EN PRODUCCI�N => NO
